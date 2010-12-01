@@ -11,7 +11,7 @@
     </head>
     <body>
 			http://www.stevesouders.com/blog/2009/04/27/loading-scripts-without-blocking/
-			<h1>defer jQuery Loading</h1>
+			<h1>loadjQ jQuery Loading</h1>
 			<p>Queuing : <span id="queuing">0</span> inline document.ready calls</p>
 			<p>Triyng to boot jQuery : <span id="waiting">0</span> times</p>
 			<h1>Inline scripts</h1>
