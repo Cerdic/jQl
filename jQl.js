@@ -34,7 +34,7 @@
  * are run before inline scripts. But if some modules are longer to load and arrive
  * after jQuery, they will be run after queued inline calls
  *
- * v 1.0.0
+ * v 1.1.0
  * (c) 29-11-2010 Cedric Morin licence GPL
  *
  */
@@ -76,12 +76,12 @@ var jQl={
 	 * call it after calling jQuery in order to wait it's loaded
 	 * or use it in onload='' on script defer/async element
 	 *
-	 * @param function c
+	 * @param function callback
 	 *	a callback to call after jQuery is loaded
 	 *
 	 */
 	"bId":null,
-	"boot":function(c){
+	"boot":function(callback){
 		if(typeof window.jQuery.fn == 'undefined'){
 			if (!jQl.bId) {
 				jQl.bId = setInterval(function(){jQl.boot(c)},25);
@@ -101,7 +101,7 @@ var jQl={
 		$(jQl.unq());
 
 		// call the callback if provided
-		if(typeof c=='function') c();
+		if(typeof callback=='function') callback();
 	},
 
 	"booted":function(){return jQl.bId===0},
@@ -114,7 +114,7 @@ var jQl={
 	 *   jQuery url to use, can be a CDN hosted,
 	 *   or a compiled js including jQuery
 	 */
-	"loadjQ":function(src){
+	"loadjQ":function(src,callback){
 		setTimeout(
 			function(){
 				var s=document.createElement('script');
@@ -122,7 +122,7 @@ var jQl={
 				document.getElementsByTagName('head')[0].appendChild(s)
 			},
 			1);
-		jQl.boot();
+		jQl.boot(callback);
 	},
 
 
