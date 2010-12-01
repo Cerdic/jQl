@@ -35,7 +35,7 @@
  * after jQuery, they will be run after queued inline calls
  *
  * v 1.0.0
- * (c) 29-11-2010 Cedric Morin sous licence GPL
+ * (c) 29-11-2010 Cedric Morin licence GPL
  *
  */
 var jQl={
@@ -45,7 +45,7 @@ var jQl={
 	"q":[],
 
 	/**
-	 * the jQuery dependencied xhr loaded queue
+	 * the jQuery dependencies xhr loaded queue
 	 */
 	"dq":[],
 
