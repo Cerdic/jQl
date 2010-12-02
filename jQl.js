@@ -34,7 +34,7 @@
  * are run before inline scripts. But if some modules are longer to load and arrive
  * after jQuery, they will be run after queued inline calls
  *
- * v 1.1.1
+ * v 1.1.2
  * (c) 29-11-2010 Cedric Morin licence GPL
  *
  */
@@ -260,5 +260,6 @@ var jQl={
  * $('document').ready(function(){...})
  * jQuery('document').ready(function(){...})
  *
+ * only if jQuery is not already loaded
  */
-var $=jQl.ready,jQuery=$;
+if (typeof window.jQuery=='undefined'){var $=jQl.ready,jQuery=$;}
