@@ -11,7 +11,7 @@
 				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
     </head>
     <body>
-			http://www.stevesouders.com/blog/2009/04/27/loading-scripts-without-blocking/
+	    <a href="http://www.yterium.net/jQl-an-asynchronous-jQuery-Loader">http://www.yterium.net/jQl-an-asynchronous-jQuery-Loader</a>
 			<h1>script jQuery Loading</h1>
 			<p>Queuing : <span id="queuing">0</span> inline document.ready calls</p>
 			<p>Triyng to boot jQuery : <span id="waiting">0</span> times</p>
