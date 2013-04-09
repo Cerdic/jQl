@@ -31,16 +31,9 @@ and during this all inline calls to $(document).ready() will be queued.
 As soon as jQuery is ready,
 all queued inline calls will be run respecting their initial order.
 
-Be careful
-==========
+At the moment, inline call executions now do wait for jQuery-dependent modules.
 
-At the moment, inline call executions are not waiting jQuery-dependent modules,
-but only jQuery core.
-
-However, when jQuery is loaded, jQuery-dependent modules already loaded
-are run before inline scripts. But if some modules are longer to load and arrive
-after jQuery, they will be run after queued inline calls.
-
-v 1.1.3
+v 1.1.4
 (c) 29-11-2010 Cedric Morin licence GPL
 (c) 22-07-2012 Filip Oščádal licence GPL
+(c) 09-04-2013 Julian Waller licence GPL
