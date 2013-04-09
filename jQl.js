@@ -52,9 +52,14 @@ var jQl={
 	"dq":[],
 
 	/**
-	 * The amount od dependencies requested
+	 * Map the dependency request order to their data
 	 */
-	"dCount":0,
+	"dMap":[],
+
+	/**
+	 * The amount of dependencies loaded
+	 */
+	"dLoaded":0,
 
 	/**
 	 * the ready function that collect calls and put it in the queue
@@ -118,15 +123,18 @@ var jQl={
 			return;
 		}
 		
-		if(jQl.dCount == jQl.dq.length){
-			// OK, jQuery is loaded,
-			// we can load additional jQuery dependents modules
-			jQl.unqjQdep(true);
-
-			// then unqueue all inline calls
-			// (when document is ready)
-			$(jQl.unq());
+		if(jQl.dLoaded != jQl.dMap.length){
+			setTimeout(jQl.testFinished, 10);
+			return;
 		}
+
+		// OK, jQuery is loaded,
+		// we can load additional jQuery dependents modules
+		jQl.unqjQdep(true);
+
+		// then unqueue all inline calls
+		// (when document is ready)
+		$(jQl.unq());
 	},
 
 	/**
@@ -171,11 +179,8 @@ var jQl={
 	 * depending of jQuery loading state
 	 */
 	"loadjQdep":function(src){
-		jQl.incDep();
+		jQl.dMap.push(src);
 		jQl.loadxhr(src, jQl.qdep);
-	},
-
-	"incDep":function(){
 		jQl.dCount++;
 	},
 
@@ -191,7 +196,8 @@ var jQl={
 	 */
 	"qdep":function(txt, src){
 		if (txt){
-			jQl.dq.push(txt);
+			jQl.dLoaded++;
+			jQl.dq[src] = txt;
 		}
 	},
 
@@ -206,8 +212,9 @@ var jQl={
 			setTimeout(jQl.unqjQdep, 50);
 			return;
 		}
-		for (var i=0;i<jQl.dq.length;i++) jQl.rs(jQl.dq[i]);
+		for (var i=0;i<jQl.dMap.length;i++) jQl.rs(jQl.dq[jQl.dMap[i]]);
 		jQl.dq = [];
+		jQl.dMap = [];
 	},
 
 
