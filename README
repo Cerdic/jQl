@@ -26,7 +26,8 @@ If you use a defer inline script, you have to manually call boot() function :
 <script type="text/javascript">jQl.boot();</script>
 
 jQuery will be loaded without blocking browser rendering,
-and during this all inline calls to $(document).ready() will be queued.
+and during this all inline calls to $(document).ready() and $.getScript() will be queued.
+
 
 As soon as jQuery is ready,
 all queued inline calls will be run respecting their initial order.
@@ -41,6 +42,5 @@ However, when jQuery is loaded, jQuery-dependent modules already loaded
 are run before inline scripts. But if some modules are longer to load and arrive
 after jQuery, they will be run after queued inline calls.
 
-v 1.1.3
-(c) 29-11-2010 Cedric Morin licence GPL
-(c) 22-07-2012 Filip Oščádal licence GPL
+v 1.2.0
+(c) 2010-2013 Cedric Morin licence GPL
