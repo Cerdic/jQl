@@ -34,7 +34,7 @@
  * are run before inline scripts. But if some modules are longer to load and arrive
  * after jQuery, they will be run after queued inline calls
  *
- * v 1.1.2
+ * v 1.1.3
  * (c) 29-11-2010 Cedric Morin licence GPL
  *
  */
