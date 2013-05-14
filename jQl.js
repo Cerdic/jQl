@@ -7,37 +7,35 @@
  * $(document).ready(function(){})
  *
  * Include it, then just call :
- * jQl.loadjQ('http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+ * jQl.loadjQ('//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
  *
  * You can also use it to load jQuery-dependent module in parallel,
  * it will be queue and run after jQuery is loaded :
- * jQl.loadjQ('http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+ * jQl.loadjQ('//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
  * jQl.loadjQdep('my.example.com/js/myplugin.jquery.js');
  *
  * If you use a defer inline script, you have to manually call boot() function :
  *
- * &lt;script defer type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js">&lt;/script>
+ * &lt;script defer type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">&lt;/script>
  * &lt;script type="text/javascript">jQl.boot();&lt;/script>
  *
  *
  *
  * jQuery will be loaded without blocking browser rendering,
- * and during this all inline calls to $(document).ready()
+ * and during this all inline calls to $(document).ready() and $.getScript()
  * will be queued.
- * As soon as jQuery is ready, all queued inline calls will be run
+ * As soon as jQuery is ready, all queued ready() and getScript() calls will be run
  * respecting their initial order
  *
  * Be careful :
- * At the moment, inline call executions are not waiting jQuery-dependent modules,
+ * At the moment, inline call and getScript executions are not waiting jQuery-dependent modules,
  * but only jQuery core
  * However, when jQuery is loaded, jQuery-dependent modules already loaded
  * are run before inline scripts. But if some modules are longer to load and arrive
  * after jQuery, they will be run after queued inline calls
  *
- * v 1.1.4
- * (c) 29-11-2010 Cedric Morin licence GPL
- * (c) 22-07-2012 Filip Oščádal licence GPL
- * (c) 09-04-2013 Julian Waller licence GPL
+ * v 1.3.0
+ * (c) 2010-2013 Cedric Morin licence GPL
  *
  */
 var jQl={
@@ -62,6 +60,11 @@ var jQl={
 	"dLoaded":0,
 
 	/**
+	 * the jQuery.getScript queue
+	 */
+	"gs":[],
+
+	/**
 	 * the ready function that collect calls and put it in the queue
 	 */
 	"ready":function(f){
@@ -71,10 +74,13 @@ var jQl={
 		// return jQl in order to support jQuery(document).ready()
 		return jQl;
 	},
+	"getScript":function(s,c){
+		jQl.gs.push([s,c]);
+	},
 
 	/**
-	 * unqueue function
-	 * run all queues inline calls
+	 * unqueue ready() function
+	 * run all queues inline $.ready() calls
 	 * in the right order and purge the queue
 	 *
 	 */
@@ -82,6 +88,18 @@ var jQl={
 		for(var i=0;i<jQl.q.length;i++)
 			jQl.q[i]();
 		jQl.q=[];},
+
+	/**
+	 * unqueue getScript() function
+	 * run all queues $.getScript calls
+	 * in the right order and purge the queue
+	 *
+	 */
+	"ungs":function(){
+		for(var i=0;i<jQl.gs.length;i++)
+			jQuery.getScript(jQl.gs[i][0],jQl.gs[i][1]);
+		jQl.gs=[];
+	},
 
 	/**
 	 * boot function
@@ -106,6 +124,12 @@ var jQl={
 		jQl.bId=0;
 
 		jQl.testFinished();
+		// then unqueue all getScript calls
+		jQl.ungs();
+
+		// and last unqueue all inline calls
+		// (when document is ready)
+		jQuery(jQl.unq());
 
 		// call the callback if provided
 		if(typeof callback=='function') callback();
@@ -140,9 +164,10 @@ var jQl={
 	/**
 	 * load jQuery script asynchronously in all browsers
 	 * by delayed dom injection
-	 * @param strinc src
+	 * @param string src
 	 *   jQuery url to use, can be a CDN hosted,
 	 *   or a compiled js including jQuery
+	 * @param callback
 	 */
 	"loadjQ":function(src,callback){
 		setTimeout(
@@ -289,6 +314,8 @@ var jQl={
  * $('document').ready(function(){...})
  * jQuery('document').ready(function(){...})
  *
+ * $.getScript() and jQuery.getScript() also catched and called
+ *
  * only if jQuery is not already loaded
  */
-if (typeof window.jQuery=='undefined'){var $=jQl.ready,jQuery=$;}
+if (typeof window.jQuery=='undefined'){var $=jQl.ready,jQuery=$;$.getScript=jQl.getScript;}
