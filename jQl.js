@@ -121,7 +121,7 @@ var jQl={
 
 		// and last unqueue all inline calls
 		// (when document is ready)
-		jQuery(jQl.unq());
+		jQuery(jQl.unq);
 
 		// call the callback if provided
 		if(typeof callback=='function') callback();
