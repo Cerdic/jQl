@@ -9,7 +9,7 @@
 		<?php include "jQldemo.js"?>
 		jQl.boot();
 	</script>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 </head>
 <body>
 <h1>async jQuery Loading</h1>
