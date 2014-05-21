@@ -34,7 +34,7 @@
  * are run before inline scripts. But if some modules are longer to load and arrive
  * after jQuery, they will be run after queued inline calls
  *
- * v 1.2.0
+ * v 1.3.0
  * (c) 2010-2013 Cedric Morin licence GPL
  *
  */
@@ -48,6 +48,16 @@ var jQl={
 	 * the jQuery dependencies xhr loaded queue
 	 */
 	"dq":[],
+
+	/**
+	 * Map the dependency request order to their data
+	 */
+	"dMap":[],
+
+	/**
+	 * The amount of dependencies loaded
+	 */
+	"dLoaded":0,
 
 	/**
 	 * the jQuery.getScript queue
@@ -112,10 +122,8 @@ var jQl={
 			clearInterval(jQl.bId);
 		}
 		jQl.bId=0;
-		// OK, jQuery is loaded,
-		// we can load additional jQuery dependents modules
-		jQl.unqjQdep();
 
+		jQl.testFinished();
 		// then unqueue all getScript calls
 		jQl.ungs();
 
@@ -129,6 +137,29 @@ var jQl={
 
 	"booted":function(){return jQl.bId===0},
 
+	/**
+	 * Test whether jquery and all dependencies have loaded.
+	 * If so, then run all dependencies and ready calls
+	 */
+	"testFinished":function(){
+		if (typeof window.jQuery.fn=="undefined"){
+			setTimeout(jQl.testFinished, 10);
+			return;
+		}
+		
+		if(jQl.dLoaded != jQl.dMap.length){
+			setTimeout(jQl.testFinished, 10);
+			return;
+		}
+
+		// OK, jQuery is loaded,
+		// we can load additional jQuery dependents modules
+		jQl.unqjQdep(true);
+
+		// then unqueue all inline calls
+		// (when document is ready)
+		$(jQl.unq());
+	},
 
 	/**
 	 * load jQuery script asynchronously in all browsers
@@ -173,7 +204,9 @@ var jQl={
 	 * depending of jQuery loading state
 	 */
 	"loadjQdep":function(src){
+		jQl.dMap.push(src);
 		jQl.loadxhr(src, jQl.qdep);
+		jQl.dCount++;
 	},
 
 	/**
@@ -188,12 +221,8 @@ var jQl={
 	 */
 	"qdep":function(txt, src){
 		if (txt){
-			if (typeof window.jQuery.fn!=="undefined" && !jQl.dq.length){
-				jQl.rs(txt);
-			}
-			else {
-				jQl.dq.push(txt);
-			}
+			jQl.dLoaded++;
+			jQl.dq[src] = txt;
 		}
 	},
 
@@ -201,15 +230,16 @@ var jQl={
 	 * dequeue jQuery-dependent modules loaded before jQuery
 	 * call once only
 	 */
-	"unqjQdep":function(){
+	"unqjQdep":function(force){
 		// security, should never happen
 		// so we keep setTimeout even if setInterval would be cleaner
-		if (typeof window.jQuery.fn=="undefined"){
+		if (typeof force!="undefined" && typeof window.jQuery.fn=="undefined"){
 			setTimeout(jQl.unqjQdep, 50);
 			return;
 		}
-		for (var i=0;i<jQl.dq.length;i++) jQl.rs(jQl.dq[i]);
+		for (var i=0;i<jQl.dMap.length;i++) jQl.rs(jQl.dq[jQl.dMap[i]]);
 		jQl.dq = [];
+		jQl.dMap = [];
 	},
 
 
